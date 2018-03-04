@@ -1,0 +1,53 @@
+{
+  "name": "joyweb-redis",
+  "version": "0.0.1",
+  "author": {
+    "name": "Jeriah Lee",
+    "email": "jeriah_lee@163.com"
+  },
+  "description": "A Redis Lib for CURD created by ioredis",
+  "keywords": [
+    "redis"
+  ],
+  "scripts": {
+    "coverage": "npm test && nyc report --reporter=html",
+    "lint": "eslint --fix src/index.js",
+    "test": "npm run lint && nyc ava test/",
+    "build": "cross-env BABEL_ENV=commonjs babel src --out-dir lib"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "ioredis": "^2.5.0"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "cross-env": "^5.1.1",
+    "coveralls": "^2.11.16",
+    "eslint": "^4.8.0",
+    "nyc": "^11.4.1"
+  },
+  "engines": {
+    "node": ">=6.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:joy-web/joyweb-redis.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joy-web/joyweb-redis/issues"
+  },
+  "homepage": "https://github.com/joy-web/joyweb-redis#readme",
+  "ava": {
+    "files": [
+      "test/*.js"
+    ]
+  }
+}
