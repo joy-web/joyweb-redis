@@ -19,7 +19,7 @@ const defaultConfig = {
   password: ''
 };
 
-export default class Redis {
+class Redis {
   constructor(config) {
     this.redis = this[_getConnection]({
       ...defaultConfig,
@@ -128,3 +128,56 @@ export default class Redis {
     }
   }
 }
+
+/**
+ * cache manage
+ * @param {String} name
+ * @param {Mixed} value
+ * @param {String|Object} config
+ */
+export const cache = (name, value, config) => {
+
+  assert(name && typeof name === 'string', 'cache.name must be a string');
+
+  const redisInst = new Redis({
+    ...defaultConfig,
+    ...config
+  });
+
+  // delete cache
+  if (value === null) {
+    return Promise.resolve(redisInst.delete(name));
+  }
+
+  // get cache
+  if (value === undefined) {
+    return debounceInstance.debounce(name, () => {
+      return redisInst.get(name);
+    });
+  }
+
+  // get cache when value is function
+  if (typeof value === 'function') {
+    return debounceInstance.debounce(name, () => {
+      let cacheData;
+      return redisInst.get(name).then(data => {
+        if (data === undefined) {
+          return value(name);
+        }
+        cacheData = data;
+      }).then(data => {
+        if (data !== undefined) {
+          cacheData = data;
+          return redisInst.set(name, data);
+        }
+      }).then(() => {
+        return cacheData;
+      });
+    });
+  }
+
+  // set cache
+  return Promise.resolve(redisInst.set(name, value));
+};
+
+export default Redis;

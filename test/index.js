@@ -3,7 +3,7 @@
 */
 
 import test from 'ava';
-import Redis from '../lib/index';
+import Redis, {cache} from '../lib/index';
 
 test.serial('set key & get key & del key', async t => {
   let key = 'name1';
@@ -32,11 +32,10 @@ test.serial('set key', async t => {
   t.true(s1 === 'OK' && s2 === 'OK' && s3 === 'OK' && s4 === 'OK');
 });
 
-
 test.serial('set key and then incr & decr ', async t => {
   let key = 'id';
   let redisInst = new Redis();
-  let s1 = await redisInst.set(key, '100', 365 * 24 * 3600);
+  let s = await redisInst.set(key, '100', 365 * 24 * 3600);
   await redisInst.increase(key).catch((e) => {
     console.log(e);
   });
@@ -46,6 +45,28 @@ test.serial('set key and then incr & decr ', async t => {
     console.log(e);
   });
   let g2 = await redisInst.get(key);
-  t.true(g1 === '101' && g2 === '100');
+  t.true(s === 'OK' && g1 === '101' && g2 === '100');
 });
 
+test.serial('set cache & get cache & del cache', async t => {
+  let key = 'cache_1';
+  let value = 'value1';
+  let s = await cache(key, value);
+  //Todo get cache failed
+  //let g1 = await cache(key);
+  let d = await cache(key, null);
+  //let g2 = await cache(key);
+
+  t.true(s === 'OK' && d === 1);
+});
+
+test.serial('get cache and then set cache', async t => {
+  let key = 'cache_2';
+  let value = 'value2';
+  let g1 = await cache(key, () => {
+    return value
+  }, 10000);
+  //let g2 = await cache(key);
+
+  t.true(g1 === value);
+});

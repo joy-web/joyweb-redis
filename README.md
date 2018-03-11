@@ -23,7 +23,24 @@ const defaultConfig = {
 ### usage
 
 ```js
-import Redis from '../index';
+import Redis, {cache} from '../index';
+
+// set cache
+await cache('cache', 'value')
+
+// get cache
+await cache('cache')
+
+// delete cache
+await cache('cache', null)
+
+// get cache
+await cache('cache', () => {
+  //if cache not exist, set cache and return
+  return 'value'
+}, 10000)
+
+// you can also operation redis through the following methods
 
 let redisInst = new Redis(config);
 
@@ -40,7 +57,7 @@ let g1 = await redisInst.get('name2');
 let d1 = await redisInst.delete(key);
 
 // add event listener, supported events see at https://github.com/luin/ioredis
-redisInst.on('connect', function() {
+redisInst.on('connect', () => {
   // todo
 });
 
