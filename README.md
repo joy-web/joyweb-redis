@@ -23,7 +23,7 @@ const defaultConfig = {
 ### usage
 
 ```js
-import Redis, {cache} from '../index';
+import Redis, {cache} from 'joyweb-redis';
 
 // set cache
 await cache('cache', 'value')
@@ -38,7 +38,9 @@ await cache('cache', null)
 await cache('cache', () => {
   //if cache not exist, set cache and return
   return 'value'
-}, 10000)
+}, {
+  timeout: 24 * 2600 * 1000
+})
 
 // you can also operation redis through the following methods
 

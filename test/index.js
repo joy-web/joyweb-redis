@@ -1,15 +1,15 @@
 /*
-* @ Author: Jeriah Lee
-*/
+ * @ Author: Jeriah Lee
+ */
 
 import test from 'ava';
-import Redis, {cache} from '../lib/index';
+import Redis, {cache}  from '../lib/index';
 
 test.serial('set key & get key & del key', async t => {
   let key = 'name1';
   let value = 'value1';
   let redisInst = new Redis();
-  redisInst.on('connect', function() {
+  redisInst.on('connect', function () {
     // console.log('connect...')
   });
   let s = await redisInst.set(key, value);
@@ -48,25 +48,35 @@ test.serial('set key and then incr & decr ', async t => {
   t.true(s === 'OK' && g1 === '101' && g2 === '100');
 });
 
-test.serial('set cache & get cache & del cache', async t => {
-  let key = 'cache_1';
-  let value = 'value1';
-  let s = await cache(key, value);
-  //Todo get cache failed
-  //let g1 = await cache(key);
-  let d = await cache(key, null);
-  //let g2 = await cache(key);
+// test.serial('set cache & get cache & del cache', async t => {
+//   let key = 'cache_1';
+//   let value = 'value1';
+//   let cacheInst = new RedisCache();
+//   let s = await cacheInst.set(key, value);
+//   let g = await cacheInst.get(key);
+//   let d = await cacheInst.delete(key);
+//
+//   t.true(s === 'OK' && g === value && d === 1);
+// });
 
-  t.true(s === 'OK' && d === 1);
-});
-
-test.serial('get cache and then set cache', async t => {
+test.serial('set cache & get cache use cache', async t => {
   let key = 'cache_2';
   let value = 'value2';
+  let s1 = await cache(key, value);
+  let g1 = await cache(key);
+  let s2 = await cache(key, null);
+  let g2 = await cache(key);
+
+  t.true(s1 === 'OK' && g1 === value && s2 === 1 && g2 === undefined);
+});
+
+test.serial('get cache when value is function', async t => {
+  let key = 'cache_3';
+  let value = 'value3';
   let g1 = await cache(key, () => {
     return value
-  }, 10000);
-  //let g2 = await cache(key);
+  });
+  let g2 = await cache(key);
 
-  t.true(g1 === value);
+  t.true(g1 === value && g2 === value);
 });
